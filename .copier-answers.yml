@@ -1,0 +1,20 @@
+# Changes here will be overwritten by Copier
+_commit: 0.10.2
+_src_path: https://github.com/pawamoy/copier-pdm.git
+author_email: gdouzas@icloud.com
+author_fullname: Georgios Douzas
+author_username: georgedouzas
+copyright_date: '2022'
+copyright_holder: Georgios Douzas
+copyright_holder_email: gdouzas@icloud.com
+copyright_license: MIT License
+project_description: A Python package to create and simulate physics models.
+project_name: Sage Physics
+python_package_command_line_name: sage-physics
+python_package_distribution_name: sage-physics
+python_package_import_name: sagephys
+repository_name: sage-physics
+repository_namespace: georgedouzas
+repository_provider: github.com
+use_precommit: false
+
