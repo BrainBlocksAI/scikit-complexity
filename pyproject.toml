@@ -5,23 +5,16 @@ build-backend = "pdm.pep517.api"
 [project]
 name = "sage-physics"
 description = "A Python package to create and simulate physics models."
-authors = [{name = "Georgios Douzas", email = "gdouzas@icloud.com"}]
+authors = [{name = "Georgios Douzas", email = "gdouzas@icloud.com"}, {name = "Theofanis Ifaistos", email = "theofanis.ifaistos@gmail.com"}]
 license-expression = "MIT"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 keywords = []
 dynamic = ["version"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Topic :: Documentation",
     "Topic :: Software Development",
     "Topic :: Software Development :: Documentation",
