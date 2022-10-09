@@ -6,7 +6,7 @@
 [![gitpod](https://img.shields.io/badge/gitpod-workspace-blue.svg?style=flat)](https://gitpod.io/#https://github.com/georgedouzas/sage-physics)
 [![gitter](https://badges.gitter.im/join%20chat.svg)](https://gitter.im/sage-physics/community)
 
-A Python package to create and simulate physics models.
+A Python package to create and simulate physics models. It is based on the open-source Computer Algebra System [SageMath](https://www.sagemath.org/).
 
 ## Installation
 
@@ -17,6 +17,5 @@ pip install sage-physics
 
 With [`pipx`](https://github.com/pipxproject/pipx):
 ```bash
-python3.7 -m pip install --user pipx
 pipx install sage-physics
 ```
