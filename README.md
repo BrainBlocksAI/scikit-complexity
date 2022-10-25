@@ -10,12 +10,24 @@ A Python package to create and simulate physics models. It is based on the open-
 
 ## Installation
 
+There two main ways of installing the library. The first is for users while the second is need for
+development and it uses [PDM](https://pdm.fming.dev/latest/) as the package manager.
+
+### User
+
 With `pip`:
+
 ```bash
-pip install sage-physics
+sage --pip install sage-physics
 ```
 
-With [`pipx`](https://github.com/pipxproject/pipx):
+### Developement
+
 ```bash
-pipx install sage-physics
+git clone https://github.com/georgedouzas/sage-physics.git
+cd sage-physics
+SAGE_PATH=$(sage --root)/venv/bin
+pdm use $SAGE_PATH/python3
+pdm --pep582 >> $SAGE_PATH/sage-env-config
+pdm install
 ```
