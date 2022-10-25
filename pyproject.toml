@@ -6,7 +6,7 @@ build-backend = "pdm.pep517.api"
 name = "sage-physics"
 description = "A Python package to create and simulate physics models."
 authors = [{name = "Georgios Douzas", email = "gdouzas@icloud.com"}, {name = "Theofanis Ifaistos", email = "theofanis.ifaistos@gmail.com"}]
-license-expression = "MIT"
+license = "MIT"
 readme = "README.md"
 requires-python = ">=3.10,<3.11"
 keywords = []
