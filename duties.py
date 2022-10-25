@@ -318,6 +318,7 @@ def test(ctx, match: str = ""):
     os.environ["COVERAGE_FILE"] = f".coverage.{py_version}"
     ctx.run(
         ["pytest", "-c", "config/pytest.ini", "-n", "auto", "-k", match, "tests"],
-        title="Running tests",
+        title="Running Python tests",
         pty=PTY,
     )
+    ctx.run("sage -t src", title="Running Sage tests")
