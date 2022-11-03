@@ -8,7 +8,7 @@ description = "A Python package to create and simulate physics models."
 authors = [{name = "Georgios Douzas", email = "gdouzas@icloud.com"}, {name = "Theofanis Ifaistos", email = "theofanis.ifaistos@gmail.com"}]
 license = "MIT"
 readme = "README.md"
-requires-python = ">=3.10,<3.11"
+requires-python = ">=3.8,<3.11"
 keywords = []
 dynamic = ["version"]
 classifiers = [
