@@ -8,9 +8,10 @@ and solve the dynamical equations of Netwonian models.
 
 from sage.all import *
 from sage.symbolic.expression import Expression
+from typing import Union,Dict,Tuple
 
-ExternalForces = dict[str : dict[str:Expression] | None] | None
-InternalForces = dict[tuple[str, str] : dict[str:Expression] | None] | None
+ExternalForces = Union[Dict[str,Union[Dict[str,Expression], None]], None]
+InternalForces = Union[Dict[Tuple[str,str], Union[Dict[str,Expression],None]], None]
 
 
 class NewtonianPointParticlesModel:
