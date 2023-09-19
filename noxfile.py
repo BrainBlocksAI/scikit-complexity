@@ -2,15 +2,11 @@
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import Any
 
 import nox
 
-os.environ.update({'PDM_IGNORE_SAVED_PYTHON': '1'})
-
-PYTHON_VERSIONS: list[str] = ['3.10', '3.11']
 FILES: list[str] = ['src', 'tests', 'docs', 'noxfile.py']
 CHANGELOG_ARGS: dict[str, Any] = {
     'repository': '.',
@@ -47,7 +43,6 @@ def docs(session: nox.Session) -> None:
         session: The nox session.
     """
     check_cli(session, ['serve', 'build'])
-    session.run('pdm', 'install', '-dG', 'docs', external=True)
     session.run('mkdocs', session.posargs[0])
 
 
@@ -61,14 +56,13 @@ def formatting(session: nox.Session, file: str) -> None:
         file: The file to be formatted.
     """
     check_cli(session, ['all', 'code', 'docstrings'])
-    session.run('pdm', 'install', '-dG', 'formatting', '--no-default', external=True)
     if session.posargs[0] in ['code', 'all']:
         session.run('black', file)
     if session.posargs[0] in ['docstrings', 'all']:
         session.run('docformatter', '--in-place', '--recursive', '--close-quotes-on-newline', file)
 
 
-@nox.session(python=PYTHON_VERSIONS)
+@nox.session
 @nox.parametrize('file', FILES)
 def checks(session: nox.Session, file: str) -> None:
     """Check code quality, dependencies or type annotations.
@@ -78,7 +72,6 @@ def checks(session: nox.Session, file: str) -> None:
         file: The file to be checked.
     """
     check_cli(session, ['all', 'quality', 'dependencies', 'types'])
-    session.run('pdm', 'install', '-dG', 'checks', '--no-default', external=True)
     if session.posargs[0] in ['quality', 'all']:
         session.run('ruff', file)
     if session.posargs[0] in ['types', 'all']:
@@ -86,7 +79,7 @@ def checks(session: nox.Session, file: str) -> None:
     if session.posargs[0] in ['dependencies', 'all']:
         requirements_path = (Path(session.create_tmp()) / 'requirements.txt').as_posix()
         args_groups = [['--prod']] + [['-dG', group] for group in ['tests', 'docs', 'maintenance']]
-        requirements_types = zip(FILES, args_groups)
+        requirements_types = zip(FILES, args_groups, strict=True)
         args = [
             'pdm',
             'export',
@@ -102,14 +95,13 @@ def checks(session: nox.Session, file: str) -> None:
         session.run('safety', 'check', '-r', requirements_path)
 
 
-@nox.session(python=PYTHON_VERSIONS)
+@nox.session
 def tests(session: nox.Session) -> None:
     """Run tests and coverage.
 
     Arguments:
         session: The nox session.
     """
-    session.run('pdm', 'install', '-dG', 'tests', external=True)
     env = {'COVERAGE_FILE': f'.coverage.{session.python}'}
     if session.posargs:
         session.run('pytest', '-n', 'auto', '-k', *session.posargs, 'tests', env=env)
@@ -127,7 +119,6 @@ def changelog(session: nox.Session) -> None:
     Arguments:
         session: The nox session.
     """
-    session.run('pdm', 'install', '-dG', 'changelog', '--no-default', external=True)
     from git_changelog.cli import build_and_render
 
     build_and_render(**CHANGELOG_ARGS)
@@ -140,7 +131,6 @@ def release(session: nox.Session) -> None:
     Arguments:
         session: The nox session.
     """
-    session.run('pdm', 'install', '-dG', 'changelog', '-dG', 'release', '--no-default', external=True)
     from git_changelog.cli import build_and_render
 
     changelog, _ = build_and_render(**CHANGELOG_ARGS)

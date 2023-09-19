@@ -10,6 +10,6 @@ copyright_license: MIT License
 project_description: A Python package to create and simulate physics models.
 python_package_distribution_name: sage-physics
 python_package_import_name: sagephys
-python_versions: '>=3.10, <=3.11'
+python_versions: '>=3.9, <3.12'
 repository_name: sage-physics
 repository_namespace: georgedouzas

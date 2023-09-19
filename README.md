@@ -15,14 +15,8 @@
 [gitter badge]: <https://badges.gitter.im/join%20chat.svg>
 [discussions]: <https://github.com/georgedouzas/sage-physics/discussions>
 [discussions badge]: <https://img.shields.io/github/discussions/georgedouzas/sage-physics>
-[ci]: <https://github.com/georgedouzas/sage-physics/actions?query=workflow>
-[ci badge]: <https://github.com/georgedouzas/sage-physics/actions/workflows/ci.yml/badge.svg?branch=main>
-[doc]: <https://github.com/georgedouzas/sage-physics/actions?query=workflow>
-[doc badge]: <https://github.com/georgedouzas/sage-physics/actions/workflows/doc.yml/badge.svg?branch=main>
 
 # sage-physics
-
-[![ci][ci badge]][ci] [![doc][doc badge]][doc]
 
 | Category          | Tools    |
 | ------------------| -------- |
@@ -35,20 +29,84 @@
 
 A Python package to create and simulate physics models.
 
+## Prerequisites
+
+An installation of [SageMath](https://www.sagemath.org/) with version > 10.0 is required.
+
 ## Installation
+
+You can install `sage-physics` either as a normal user or for development purposes.
+
+### User
 
 For user installation, `sage-physics` is currently available on the PyPi's repository, and you can
 install it via `pip`:
 
 ```bash
-pip install sage-physics
+sage --pip install sage-physics
 ```
 
-Development installation requires to clone the repository and then use [PDM](https://github.com/pdm-project/pdm) to install the
-project as well as the main and development dependencies:
+You can then start the Sage REPL with the command `sage` and use `sage-physics` through the Sage REPL:
+
+```python
+import sagephys
+```
+
+### Development
+
+Development installation requires to clone the repository and change directory to the project's root:
 
 ```bash
 git clone https://github.com/georgedouzas/sage-physics.git
 cd sage-physics
+```
+
+Then create a Python virtual environment using the `sage` command:
+
+```bash
+sage -python -m venv --system-site-packages .venv
+```
+
+Finally, use [PDM](https://github.com/pdm-project/pdm) to select the virtual environment and install the project as well as the
+main and development dependencies:
+
+```bash
+pdm use .venv
 pdm install
+```
+
+You can then start the Sage REPL with the command `PYTHONPATH=src sage` and use `sage-physics` through the Sage REPL:
+
+```python
+import sagephys
+```
+
+## Usage
+
+One of the `sage-physics` main goals is to provide a unified interface for various physics models. For example let's define two
+independent harmonic oscillators that oscillate in the axes x and y:
+
+```python
+from sage.all import var, assume
+from sagephys.classical_mechanics import NewtonianPointParticlesModel
+k, x_particle1, y_particle2 = var('k x_particle1 y_particle2')
+assume(k > 0)
+forces = {
+    'particle1': {'elastic': [- k * x_particle1, 0, 0]},
+    'particle2': {'elastic': [0, -k * y_particle2, 0]}
+}
+model = NewtonianPointParticlesModel(forces)
+```
+
+We can get the dynamical equations:
+
+```python
+model.analyze()
+model.equations_
+```
+
+We can also try to solve them:
+
+```python
+model.solve()
 ```
