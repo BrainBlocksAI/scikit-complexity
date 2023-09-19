@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+import click
 import nox
 
 FILES: list[str] = ['src', 'tests', 'docs', 'noxfile.py']
@@ -134,11 +135,9 @@ def release(session: nox.Session) -> None:
     from git_changelog.cli import build_and_render
 
     changelog, _ = build_and_render(**CHANGELOG_ARGS)
-    if changelog.versions_list[0].tag:
-        session.skip('Commit has already a tag. Release is aborted.')
     version = changelog.versions_list[0].planned_tag
     if version is None:
-        session.skip('Next version was not possible to be specified. Release is aborted.')
+        version = changelog.versions_list[0].tag
 
     # Create release branch and commit changelog
     session.run('git', 'checkout', '-b', f'release_{version}', external=True)
@@ -146,12 +145,12 @@ def release(session: nox.Session) -> None:
     session.run('git', 'commit', '-m', f'chore: Release {version}', '--allow-empty', external=True)
     session.run('git', 'push', '-u', 'origin', f'release_{version}', external=True)
 
-    # Create and merge PR from release branch to master
-    session.run('gh', 'pr', 'create', '--base', 'master', external=True)
+    # Create and merge PR from release branch to main
+    session.run('gh', 'pr', 'create', '--base', 'main', external=True)
     session.run('gh', 'pr', 'merge', '--rebase', '--delete-branch', external=True)
 
     # Create tag
-    session.run('git', 'checkout', 'master', external=True)
+    session.run('git', 'checkout', 'main', external=True)
     session.run('git', 'pull', '--rebase', external=True)
     session.run('git', 'tag', version, external=True)
     session.run('git', 'push', '--tags', external=True)
