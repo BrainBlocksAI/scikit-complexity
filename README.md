@@ -102,10 +102,9 @@ We can get the dynamical equations:
 
 ```python
 model.analyze()
-model.equations_
 ```
 
-We can also try to solve them:
+We can also solve them:
 
 ```python
 model.solve()
