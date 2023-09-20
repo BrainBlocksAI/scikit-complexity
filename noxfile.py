@@ -5,7 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-import click
 import nox
 
 FILES: list[str] = ['src', 'tests', 'docs', 'noxfile.py']
