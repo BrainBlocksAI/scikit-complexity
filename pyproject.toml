@@ -8,7 +8,7 @@ description = "A Python package to create and simulate physics models."
 authors = [{name = "Georgios Douzas", email = "gdouzas@icloud.com"}]
 license = "MIT"
 readme = "README.md"
-requires-python = ">=3.9, <3.12"
+requires-python = ">3.10, <3.12"
 keywords = []
 dynamic = ["version"]
 classifiers = [
@@ -17,8 +17,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Topic :: Documentation",
     "Topic :: Software Development",
@@ -39,7 +37,7 @@ Funding = "https://github.com/sponsors/georgedouzas"
 
 [tool.pdm]
 version = {source = "scm"}
-build = {package-dir = "src", editable-backend = "editables"}
+build = {package-dir = "src"}
 
 [tool.pdm.scripts]
 clean = {shell = """rm -rf .mypy_cache .pytest_cache tests/.pytest_cache build dist \
