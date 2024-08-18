@@ -1,3 +1,3 @@
 # General examples
 
-A collection of examples for sagephys package.
+A collection of examples for the `skcomplex` package.

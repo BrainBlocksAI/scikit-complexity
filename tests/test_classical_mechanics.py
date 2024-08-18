@@ -3,117 +3,214 @@
 import re
 
 import pytest
-from sage.all import Rational, assume, cos, function, sin, sqrt, var, vector
-from sagephys.classical_mechanics import NewtonianPointParticlesModel, check_force_vector, check_particles_labels
+from sage.all import assume, symbolic_expression, var
+from skcomplex.physics import (
+    ClassicalMechanicsSystem,
+    ExternalForce,
+    ExternalPotential,
+    InternalForce,
+    InternalPotential,
+    PointParticle,
+)
+from skcomplex.spaces import EuclideanSpace
 
 
-def test_check_particles_labels_default():
-    """Test default particle label when no particles are provided."""
-    assert check_particles_labels(None) == ['particle']
+@pytest.mark.parametrize('m', ['m', var('m__point')])
+def test_point_particle_wrong_mass_type(m):
+    """Test raising an error for wrong mass type."""
+    with pytest.raises(TypeError, match='m must be an instance of {int, float}'):
+        PointParticle('point', m)
 
 
-def test_check_particles_labels_wrong():
-    """Test raise of error when wrong label of is provided."""
-    m, g = var('m g')
-    with pytest.raises(ValueError, match='Wrong variable name'):
-        check_particles_labels({'body': {'weight': [0, -m * g, 0]}})
+@pytest.mark.parametrize('m', [0.0, -2.0])
+def test_point_particle_wrong_mass_value(m):
+    """Test raising an error for wrong mass type."""
+    with pytest.raises(ValueError, match=f'm == {m}, must be > 0.0.'):
+        PointParticle('point', m)
 
 
-def test_particles_labels():
-    """Test the particles labels."""
-    m_body, g, k, x_particle1, b, v_x_particle2 = var('m_body g k x_particle1 b v_x_particle2')
-    forces = {
-        'body': {'weight': [0, -m_body * g, 0]},
-        'particle1': {'force': [-k * x_particle1, 0, 0]},
-        'particle2': {'force': [-b * v_x_particle2, 0, 0]},
-    }
-    assert check_particles_labels(forces) == ['body', 'particle1', 'particle2']
+@pytest.mark.parametrize('label', ['point', 'sphere'])
+def test_point_particle_default_mass(label):
+    """Test point particle class for default mass."""
+    point_particle = PointParticle(label)
+    assert point_particle.m is None
+    assert bool(var(f'm__{label}') == point_particle.m_)
 
 
-def test_check_force_vector_not_list():
-    """The the check of force vector when it is not a list."""
-    F_vect = (0, 1, 0)
-    with pytest.raises(TypeError, match=re.escape(f'Force vector {F_vect} is not a list.')):
-        check_force_vector(F_vect)
+@pytest.mark.parametrize('m', [2.0, 4])
+def test_point_particle_numeric_mass(m):
+    """Test point particle class for numeric mass."""
+    point_particle = PointParticle('point', m)
+    assert point_particle.m is m
+    assert isinstance(point_particle.m_, float)
+    assert point_particle.m_ == m
 
 
-def test_check_force_vector_three_elements():
-    """The the check of force vector when it does not have three elements."""
-    F_vect = [0, 1]
-    with pytest.raises(
-        TypeError,
-        match=re.escape(f'Force vector {F_vect} is a list but does not have three elements.'),
-    ):
-        check_force_vector(F_vect)
+@pytest.mark.parametrize('F', [4.5, symbolic_expression(6.0)])
+def test_internal_force_wrong_force_type(F):
+    """Test raising an error for wrong force type."""
+    error_msg = f'Parameter `F` should be a list of numeric elements or symbolic expressions. Got `{F}` instead.'
+    with pytest.raises(TypeError, match=error_msg):
+        InternalForce('gravity', '1', '2', F)
 
 
-def test_check_force_vector():
-    """The the check of force vector."""
-    m_body, g, k, x_body, t = var('m_body g k x_body t')
-    F_vect = [m_body * g, -k * x_body, 0]
-    assert check_force_vector(F_vect) == vector([m_body * g, -k * function('x_body')(t), 0])
+@pytest.mark.parametrize('F', [[5.6, 'F', 3.4], 'F'])
+def test_internal_force_wrong_force_value(F):
+    """Test raising an error for wrong force value."""
+    error_msg = f'Parameter `F` should be a list of numeric elements or symbolic expressions. Got `{F}` instead.'
+    with pytest.raises(AssertionError, match=re.escape(error_msg)):
+        InternalForce('gravity', '1', '2', F)
 
 
-def test_forces_attr_no_labels():
-    """The the forces attribute when no particles are provided."""
-    model = NewtonianPointParticlesModel()
-    assert model.forces_ == {'particle': {}}
+@pytest.mark.parametrize('label', ['gravity', 'contact'])
+def test_internal_force_default_force(label):
+    """Test internal force class for default force."""
+    internal_force = InternalForce(label, '1', '2')
+    assert internal_force.F is None
+    assert bool(var(f'F__{label}__1__2') == internal_force.F_)
 
 
-def test_forces_attr():
-    """The the forces attribute."""
-    m_body, g, k, x_particle1, b, v_x_particle2 = var('m_body g k x_particle1 b v_x_particle12')
-    forces = {
-        'body': {'weight': [0, -m_body * g, 0]},
-        'particle1': {'force': [-k * x_particle1, 0, 0]},
-        'particle2': {'force': [-b * v_x_particle2, 0, 0]},
-    }
-    model = NewtonianPointParticlesModel(forces=forces)
-    assert model.forces_ == forces
+@pytest.mark.parametrize(
+    'F',
+    [
+        [1.5, 2, 3.0],
+        [0, 4, 2],
+        [symbolic_expression('2 * x'), symbolic_expression('x + y^2')],
+        [var('x') + var('y'), 5.0],
+    ],
+)
+def test_internal_force(F):
+    """Test internal force class."""
+    internal_force = InternalForce('internal', '1', '2', F)
+    assert internal_force.F is F
+    assert F == internal_force.F_
 
 
-def test_forces_attr_implied_label():
-    """The the forces attribute when label is implied."""
-    x_particle1 = var('x_particle1')
-    forces = {'body': {'internal': [-x_particle1, 0, 0]}}
-    model = NewtonianPointParticlesModel(forces=forces)
-    assert model.forces_ == {**forces, 'particle1': {}}
+@pytest.mark.parametrize('V', [[4.5], 'V'])
+def test_internal_potential_wrong_potential_type(V):
+    """Test raising an error for wrong potential type."""
+    error_msg = f'Parameter `V` should be a numeric element or symbolic expression. Got `{V}` instead.'
+    with pytest.raises(TypeError, match=re.escape(error_msg)):
+        InternalPotential('gravity', '1', '2', V)
+
+
+@pytest.mark.parametrize('label', ['gravity', 'contact'])
+def test_internal_potential_default_potential(label):
+    """Test internal potential class for default potential."""
+    internal_potential = InternalPotential(label, '1', '2')
+    assert internal_potential.V is None
+    assert bool(var(f'V__{label}__1__2') == internal_potential.V_)
+
+
+@pytest.mark.parametrize('V', [2.0, var('x') + 5.0, symbolic_expression('x + y^2')])
+def test_internal_potential(V):
+    """Test internal potential class for default potential."""
+    internal_potential = InternalPotential('internal', '1', '2', V)
+    assert internal_potential.V is V
+    assert symbolic_expression(V) == internal_potential.V_
+
+
+@pytest.mark.parametrize('F', [1.5, symbolic_expression(2.0)])
+def test_external_force_wrong_force_type(F):
+    """Test raising an error for wrong force type."""
+    error_msg = f'Parameter `F` should be a list of numeric elements or symbolic expressions. Got `{F}` instead.'
+    with pytest.raises(TypeError, match=error_msg):
+        ExternalForce('gravity', '1', F)
+
+
+@pytest.mark.parametrize('F', [[1.6, 'Force', 3.4], 'Force'])
+def test_external_force_wrong_force_value(F):
+    """Test raising an error for wrong force value."""
+    error_msg = f'Parameter `F` should be a list of numeric elements or symbolic expressions. Got `{F}` instead.'
+    with pytest.raises(AssertionError, match=re.escape(error_msg)):
+        ExternalForce('gravity', '1', F)
+
+
+@pytest.mark.parametrize('label', ['gravity', 'contact'])
+def test_external_force_default_force(label):
+    """Test external force class for default force."""
+    external_force = ExternalForce(label, '1')
+    assert external_force.F is None
+    assert bool(var(f'F__{label}__1') == external_force.F_)
+
+
+@pytest.mark.parametrize(
+    'F',
+    [
+        [1.5, 2, 3.0],
+        [0, 4, 2],
+        [symbolic_expression('2 * x^3'), symbolic_expression('x^2 + y^2')],
+        [var('x') + var('y'), 2.0],
+    ],
+)
+def test_external_force(F):
+    """Test external force class."""
+    external_force = ExternalForce('internal', '1', F)
+    assert external_force.F is F
+    assert F == external_force.F_
+
+
+@pytest.mark.parametrize('V', [[4.5], 'V'])
+def test_external_potential_wrong_potential_type(V):
+    """Test raising an error for wrong potential type."""
+    error_msg = f'Parameter `V` should be a numeric element or symbolic expression. Got `{V}` instead.'
+    with pytest.raises(TypeError, match=re.escape(error_msg)):
+        ExternalPotential('gravity', '1', V)
+
+
+@pytest.mark.parametrize('label', ['gravity', 'contact'])
+def test_external_potential_default_potential(label):
+    """Test external potential class for default potential."""
+    external_potential = ExternalPotential(label, '1')
+    assert external_potential.V is None
+    assert bool(var(f'V__{label}__1') == external_potential.V_)
+
+
+@pytest.mark.parametrize('V', [3.0, var('x') + 1.0, symbolic_expression('x^2 + y^2')])
+def test_external_potential(V):
+    """Test external potential class for default potential."""
+    external_potential = ExternalPotential('internal', '1', V)
+    assert external_potential.V is V
+    assert symbolic_expression(V) == external_potential.V_
 
 
 def test_motion_with_constant_velocity():
     """Test the solution of dynamic equations of a free particle."""
-    t, _K1, _K2 = var('t _K1 _K2')
-    model = NewtonianPointParticlesModel()
-    model.analyze()
-    solutions = model.solve()
-    assert solutions['particle'][0].match(_K2 * t + _K1) is not None
-    assert solutions['particle'][1].match(_K2 * t + _K1) is not None
-    assert solutions['particle'][2].match(_K2 * t + _K1) is not None
+    system = ClassicalMechanicsSystem(particles=[PointParticle('1')], space=EuclideanSpace('euclidean', n_dim=3))
+    system.simulate()
+    solutions = system.simulation_results_['dynamic_equations']['solutions']
+    assert solutions['1'][0] == symbolic_expression('_K2 * t + _K1')
+    assert solutions['1'][1] == symbolic_expression('_K2 * t + _K1')
+    assert solutions['1'][2] == symbolic_expression('_K2 * t + _K1')
 
 
 def test_motion_with_constant_acceleration():
     """Test the solution of dynamic equations under constant external force."""
-    t, _K1, _K2, F, m_particle = var('t _K1 _K2 F m_particle')
-    model = NewtonianPointParticlesModel(forces={'particle': {'constant': [F, 0, 0]}})
-    model.analyze()
-    solutions = model.solve()
-    assert solutions['particle'][0].match(_K2 * t + Rational(1 / 2) * F * t**2 / m_particle + _K1) is not None
-    assert solutions['particle'][1].match(_K2 * t + _K1) is not None
-    assert solutions['particle'][2].match(_K2 * t + _K1) is not None
+    system = ClassicalMechanicsSystem(
+        particles=[PointParticle('particle')],
+        external_interactions=[ExternalForce('constant', 'particle', [var('F'), 0, 0])],
+        space=EuclideanSpace('euclidean', n_dim=3),
+    )
+    system.simulate()
+    solutions = system.simulation_results_['dynamic_equations']['solutions']
+    assert solutions['particle'][0] == symbolic_expression('_K2 * t + 1 / 2 * F * t**2 / m__particle + _K1')
+    assert solutions['particle'][1] == symbolic_expression('_K2 * t + _K1')
+    assert solutions['particle'][2] == symbolic_expression('_K2 * t + _K1')
 
 
 def test_motion_one_dimensional_harmonic_oscillator():
     """Test the solution of dynamic equations of harmonic oscillator."""
-    t, _K1, _K2, k, x_sphere, m_sphere = var('t _K1 _K2 k x_sphere m_sphere')
+    k, x__sphere = var('k x__sphere')
     assume(k > 0)
-    model = NewtonianPointParticlesModel(forces={'sphere': {'elastic': [-k * x_sphere, 0, 0]}})
-    model.analyze()
-    solutions = model.solve()
-    assert (
-        solutions['sphere'][0].match(
-            _K2 * cos(sqrt(k) * t / sqrt(m_sphere)) + _K1 * sin(sqrt(k) * t / sqrt(m_sphere)),
-        )
-        is not None
+    system = ClassicalMechanicsSystem(
+        particles=[PointParticle('sphere')],
+        external_interactions=[ExternalForce('elastic', 'sphere', [-k * x__sphere, 0, 0])],
+        space=EuclideanSpace('euclidean', n_dim=3),
     )
-    assert solutions['sphere'][1].match(_K2 * t + _K1) is not None
-    assert solutions['sphere'][2].match(_K2 * t + _K1) is not None
+    system.simulate()
+    solutions = system.simulation_results_['dynamic_equations']['solutions']
+    assert solutions['sphere'][0] == symbolic_expression(
+        '_K2 * cos(sqrt(k) * t / sqrt(m__sphere)) + _K1 * sin(sqrt(k) * t / sqrt(m__sphere))',
+    )
+    assert solutions['sphere'][1] == symbolic_expression('_K2 * t + _K1')
+    assert solutions['sphere'][2] == symbolic_expression('_K2 * t + _K1')

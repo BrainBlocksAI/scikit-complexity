@@ -7,7 +7,7 @@ body:
   attributes:
     value: >
       **Before submitting a bug, please make sure the issue hasn't been already addressed by searching
-      through [the past issues](https://github.com/georgedouzas/sage-physics/issues).**
+      through [the past issues](https://github.com/georgedouzas/scikit-complexity/issues).**
 - type: textarea
   attributes:
     label: Describe the bug
@@ -52,7 +52,7 @@ body:
     description: |
       Please provide the following information.
     placeholder: >
-      `sage-physics` version
+      `scikit-complexity` version
       Python version
       OS
   validations:

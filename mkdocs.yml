@@ -1,10 +1,10 @@
-site_name: "sage-physics"
-site_description: "A Python package to create and simulate physics models."
-site_url: "https://georgedouzas.github.io/sage-physics"
-repo_url: "https://github.com/georgedouzas/sage-physics"
-repo_name: "georgedouzas/sage-physics"
+site_name: "scikit-complexity"
+site_description: "A Python package to create and simulate complex systems."
+site_url: "https://georgedouzas.github.io/scikit-complexity"
+repo_url: "https://github.com/georgedouzas/scikit-complexity"
+repo_name: "georgedouzas/scikit-complexity"
 site_dir: "site"
-watch: [README.md, CONTRIBUTING.md, CHANGELOG.md, src/sagephys]
+watch: [README.md, CONTRIBUTING.md, CHANGELOG.md, src/skcomplex]
 
 theme:
   name: material
