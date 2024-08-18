@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Any
 
 import nox
+
+os.environ.update({'PDM_IGNORE_SAVED_PYTHON': '1'})
 
 FILES: list[str] = ['src', 'tests', 'docs', 'noxfile.py']
 CHANGELOG_ARGS: dict[str, Any] = {
@@ -73,7 +76,7 @@ def checks(session: nox.Session, file: str) -> None:
     """
     check_cli(session, ['all', 'quality', 'dependencies', 'types'])
     if session.posargs[0] in ['quality', 'all']:
-        session.run('ruff', file)
+        session.run('ruff', 'check', file)
     if session.posargs[0] in ['types', 'all']:
         session.run('mypy', file)
     if session.posargs[0] in ['dependencies', 'all']:

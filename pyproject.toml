@@ -3,12 +3,12 @@ requires = ["pdm-pep517"]
 build-backend = "pdm.pep517.api"
 
 [project]
-name = "sage-physics"
-description = "A Python package to create and simulate physics models."
+name = "scikit-complexity"
+description = "A Python package to create and simulate complex systems."
 authors = [{name = "Georgios Douzas", email = "gdouzas@icloud.com"}]
 license = "MIT"
 readme = "README.md"
-requires-python = ">3.10, <3.12"
+requires-python = ">=3.10, <3.13"
 keywords = []
 dynamic = ["version"]
 classifiers = [
@@ -17,22 +17,26 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Documentation",
     "Topic :: Software Development",
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
-dependencies = []
+dependencies = [
+    "scikit-learn>=1.5.1",
+]
 
 [project.urls]
-Homepage = "https://georgedouzas.github.io/sage-physics"
-Documentation = "https://georgedouzas.github.io/sage-physics"
-Changelog = "https://georgedouzas.github.io/sage-physics/changelog"
-Repository = "https://github.com/georgedouzas/sage-physics"
-Issues = "https://github.com/georgedouzas/sage-physics/issues"
-Discussions = "https://github.com/georgedouzas/sage-physics/discussions"
-Gitter = "https://gitter.im/sage-physics/community"
+Homepage = "https://georgedouzas.github.io/scikit-complexity"
+Documentation = "https://georgedouzas.github.io/scikit-complexity"
+Changelog = "https://georgedouzas.github.io/scikit-complexity/changelog"
+Repository = "https://github.com/georgedouzas/scikit-complexity"
+Issues = "https://github.com/georgedouzas/scikit-complexity/issues"
+Discussions = "https://github.com/georgedouzas/scikit-complexity/discussions"
+Gitter = "https://gitter.im/scikit-complexity/community"
 Funding = "https://github.com/sponsors/georgedouzas"
 
 [tool.pdm]
@@ -99,30 +103,33 @@ extend-exclude = "(tests/fixtures|docs/generated)"
 skip-string-normalization = true
 
 [tool.ruff]
-select = ["C", "E", "F", "W", "B", "I", "D", "N", "UP", "YTT", "ANN", "S",
-"BLE", "A", "COM", "C4", "DTZ", "T10", "EM", "EXE", "ISC", "ICN", "G",
-"INP", "PIE", "T20", "PT", "Q", "RET501", "RET502", "RET503", "SIM",
-"PTH", "PD", "PGH", "PL", "TRY", "RUF", "PLE", "PLR", "PLW", "TRY", "RUF"]
-ignore = ["D202", "N806", "N803", "S101", "INP001", "Q000", "TRY002", "PLR0913", "EXE001", "EXE002"]
 fix = true
-fixable = ["C", "E", "F", "W", "B", "I", "D", "N", "UP", "YTT", "ANN", "S",
-"BLE", "A", "COM", "C4", "DTZ", "T10", "EM", "EXE", "ISC", "ICN", "G",
-"INP", "PIE", "T20", "PT", "Q", "RET501", "RET502", "RET503", "SIM",
-"PTH", "PD", "PGH", "PL", "TRY", "RUF", "PLE", "PLR", "PLW", "TRY", "RUF"]
 extend-exclude = ["docs/generated"]
 force-exclude = true
 line-length = 120
 target-version = "py311"
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint]
+fixable = ["C", "E", "F", "W", "B", "I", "D", "N", "UP", "YTT", "ANN", "S",
+"BLE", "A", "COM", "C4", "DTZ", "T10", "EM", "EXE", "ISC", "ICN", "G",
+"INP", "PIE", "T20", "PT", "Q", "RET501", "RET502", "RET503", "SIM",
+"PTH", "PD", "PGH", "PL", "TRY", "RUF", "PLE", "PLR", "PLW", "TRY", "RUF"]
+ignore = ["D202", "N806", "N803", "S101", "INP001", "Q000", "TRY002", "PLR0913", "EXE001", "EXE002", "E741"]
+select = ["C", "E", "F", "W", "B", "I", "D", "N", "UP", "YTT", "ANN", "S",
+"BLE", "A", "COM", "C4", "DTZ", "T10", "EM", "EXE", "ISC", "ICN", "G",
+"INP", "PIE", "T20", "PT", "Q", "RET501", "RET502", "RET503", "SIM",
+"PTH", "PD", "PGH", "PL", "TRY", "RUF", "PLE", "PLR", "PLW", "TRY", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
 "docs/examples/*" = ["ANN", "D", "B018"]
 "docs/generated/*" = ["ANN", "D"]
 "test_*" = ["ANN"]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.mypy]
+plugins = "numpy.typing.mypy_plugin"
 ignore_missing_imports = true
 exclude = ["tests/fixtures/", "docs/examples/", "docs/generated/"]
 warn_unused_ignores = true
