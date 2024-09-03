@@ -1,4 +1,4 @@
-_commit: 0.8.2
+_commit: 0.10.0
 _src_path: gh:georgedouzas/copier-pdm-nox.git
 author_email: gdouzas@icloud.com
 author_fullname: Georgios Douzas
@@ -10,7 +10,7 @@ copyright_license: MIT License
 project_description: A Python package to create and simulate complex systems.
 python_package_distribution_name: scikit-complexity
 python_package_import_name: skcomplex
-python_versions: '>=3.11, <3.12'
+python_versions: '>=3.12, <3.13'
 repository_name: scikit-complexity
 repository_namespace: georgedouzas
 
