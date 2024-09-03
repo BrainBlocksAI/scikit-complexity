@@ -25,6 +25,7 @@ classifiers = [
 ]
 dependencies = [
     "scikit-learn>=1.5.1",
+    "lammps>=2024.8.29.0.0",
 ]
 
 [project.urls]
